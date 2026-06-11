@@ -63,6 +63,23 @@ body {
   margin-top: 0.25rem;
 }
 
+.app-nav {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.app-nav a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.app-nav a:hover {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-accent);
+}
+
 .surface {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -104,6 +121,71 @@ body {
   color: var(--color-text-secondary);
 }
 
+.inventory-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+}
+
+.inventory-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.inventory-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.9rem;
+}
+
+.inventory-row h3 {
+  margin: 0 0 0.2rem;
+}
+
+.inventory-row p {
+  margin: 0.2rem 0;
+}
+
+.inventory-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.inventory-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.95rem;
+}
+
+.inventory-form input,
+.inventory-form textarea {
+  font-family: var(--font-body);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-primary);
+  padding: 0.55rem 0.65rem;
+}
+
+.inventory-inline-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.inventory-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 640px) {
   .page-shell {
     padding-top: 2rem;
@@ -112,5 +194,17 @@ body {
   .app-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .inventory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-row {
+    flex-direction: column;
+  }
+
+  .inventory-inline-fields {
+    grid-template-columns: 1fr;
   }
 }

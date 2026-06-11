@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { getCurrentUser, logout } from "@/lib/pocketbase/auth";
 
 export default function DashboardPage() {
@@ -23,14 +24,19 @@ export default function DashboardPage() {
       <p className="muted">
         Signed in as {user?.email || user?.username || "your Google account"}.
       </p>
-      <button
-        className="secondary-btn"
-        type="button"
-        onClick={handleLogout}
-        disabled={isLoggingOut}
-      >
-        {isLoggingOut ? "Signing out..." : "Log out"}
-      </button>
+      <div className="inventory-actions">
+        <Link className="primary-btn" href="/inventory">
+          Manage inventory
+        </Link>
+        <button
+          className="secondary-btn"
+          type="button"
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+        >
+          {isLoggingOut ? "Signing out..." : "Log out"}
+        </button>
+      </div>
     </section>
   );
 }
