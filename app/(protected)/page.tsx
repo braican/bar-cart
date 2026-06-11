@@ -1,25 +1,35 @@
 "use client";
 
-import { getPocketBaseClient } from "@/lib/pocketbase/client";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getCurrentUser, logout } from "@/lib/pocketbase/auth";
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const user = useMemo(() => getCurrentUser(), []);
+
   function handleLogout() {
-    const pb = getPocketBaseClient();
-    pb.authStore.clear();
-    window.location.href = "/login";
+    setIsLoggingOut(true);
+    logout();
+    router.replace("/login");
   }
 
   return (
     <section className="surface">
       <h2 style={{ fontFamily: "var(--font-display)", marginTop: 0 }}>
-        Slice A foundation is ready
+        Welcome back
       </h2>
       <p className="muted">
-        Next up is Slice B: complete auth edge states and add inventory
-        navigation/routes.
+        Signed in as {user?.email || user?.username || "your Google account"}.
       </p>
-      <button className="secondary-btn" type="button" onClick={handleLogout}>
-        Log out
+      <button
+        className="secondary-btn"
+        type="button"
+        onClick={handleLogout}
+        disabled={isLoggingOut}
+      >
+        {isLoggingOut ? "Signing out..." : "Log out"}
       </button>
     </section>
   );

@@ -2,21 +2,19 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { PropsWithChildren, useEffect, useState } from "react";
-import { getPocketBaseClient } from "@/lib/pocketbase/client";
+import { isAuthenticated, subscribeToAuthChanges } from "@/lib/pocketbase/auth";
 
 export function AuthGuard({ children }: PropsWithChildren) {
   const router = useRouter();
   const pathname = usePathname();
   const [isReady, setIsReady] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
 
   useEffect(() => {
-    const pb = getPocketBaseClient();
+    setHasSession(isAuthenticated());
 
-    setIsAuthenticated(pb.authStore.isValid);
-
-    const removeListener = pb.authStore.onChange(() => {
-      setIsAuthenticated(pb.authStore.isValid);
+    const removeListener = subscribeToAuthChanges((nextIsAuthenticated) => {
+      setHasSession(nextIsAuthenticated);
     });
 
     setIsReady(true);
@@ -24,16 +22,16 @@ export function AuthGuard({ children }: PropsWithChildren) {
   }, []);
 
   useEffect(() => {
-    if (isReady && !isAuthenticated && pathname !== "/login") {
+    if (isReady && !hasSession && pathname !== "/login") {
       router.replace("/login");
     }
-  }, [isAuthenticated, isReady, pathname, router]);
+  }, [hasSession, isReady, pathname, router]);
 
   if (!isReady) {
     return <div className="page-shell">Loading your bar cart...</div>;
   }
 
-  if (!isAuthenticated) {
+  if (!hasSession) {
     return null;
   }
 

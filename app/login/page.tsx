@@ -1,32 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import { getPocketBaseClient } from "@/lib/pocketbase/client";
+import {
+  isAuthenticated,
+  loginWithGoogle,
+  subscribeToAuthChanges,
+} from "@/lib/pocketbase/auth";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.replace("/");
+      return;
+    }
+
+    const unsubscribe = subscribeToAuthChanges((hasSession) => {
+      if (hasSession) {
+        router.replace("/");
+      }
+    });
+
+    return unsubscribe;
+  }, [router]);
 
   async function handleGoogleLogin() {
     setError(null);
     setIsLoading(true);
 
     try {
-      const pb = getPocketBaseClient();
-      const redirectURL = `${window.location.origin}/`;
-
-      await pb.collection("users").authWithOAuth2({
-        provider: "google",
-        urlCallback: (url) => {
-          window.location.href = url;
-        },
-        redirectURL,
-      });
-    } catch {
+      await loginWithGoogle();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : null;
       setError(
-        "Unable to start Google sign-in. Confirm PocketBase URL and OAuth settings.",
+        message ||
+          "Unable to start Google sign-in. Confirm PocketBase URL and OAuth settings.",
       );
+    } finally {
       setIsLoading(false);
     }
   }
